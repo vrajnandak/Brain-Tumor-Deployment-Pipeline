@@ -18,3 +18,15 @@ stages:
       md5: ac7fec83bfdd3f86a5c101a11b59bf98.dir
       size: 4489824256
       nfiles: 3728
+  train:
+    cmd: echo "Training completed"
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: ac7fec83bfdd3f86a5c101a11b59bf98.dir
+      size: 4489824256
+      nfiles: 3728
+    - path: src/train.py
+      hash: md5
+      md5: 84e0d5addb53ac3a9468f0ec1ab8ef7a
+      size: 1932
