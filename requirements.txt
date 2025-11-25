@@ -6,3 +6,5 @@ numpy
 matplotlib
 mlflow
 dvc
+flask
+flask_cors
