@@ -8,7 +8,9 @@ stages:
       - data/processed
 
   train:
-    cmd: echo "Training completed"
+    cmd: python src/train.py
     deps:
       - data/processed
       - src/train.py
+    outs:
+      - models/mobilenetv2_model.h5

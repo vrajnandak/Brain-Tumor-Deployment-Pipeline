@@ -6,32 +6,32 @@ import mlflow
 import mlflow.tensorflow
 import tensorflow as tf
 from flask_cors import CORS
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 app = Flask(__name__)
-
 CORS(app)
 
-# SET TRACKING URI (VERY IMPORTANT)
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 
-# Classes
 CLASSES = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
-# MLflow model URI (Production)
-MODEL_URI = "models:/SPE_Brain_Tumor_Classifier/Production"
+MODEL_URI = "models:/BrainTumorMobileNetV2/Production"
 
 print(f"🔄 Loading model from MLflow Registry: {MODEL_URI}")
 model = mlflow.tensorflow.load_model(MODEL_URI)
 print("✅ Model loaded successfully from MLflow!")
 
-IMAGE_SIZE = 224
+IMAGE_SIZE = 128
 
 def preprocess_image(image):
     image = image.resize((IMAGE_SIZE, IMAGE_SIZE))
     image = image.convert("RGB")
-    img_array = np.array(image) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
-    return img_array
+
+    img = np.array(image, dtype=np.float32)
+    img = preprocess_input(img)   # MobileNetV2 preprocessing
+    img = np.expand_dims(img, axis=0)
+
+    return img
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -62,7 +62,6 @@ def predict():
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "HI, How are you?"})
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
