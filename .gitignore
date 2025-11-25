@@ -1,0 +1,9 @@
+/venv
+/mlruns
+--backend-store-uri
+--default-artifact-root
+--host
+--port
+/src/__pycache__/
+/mlartifacts
+/models/*.h5
