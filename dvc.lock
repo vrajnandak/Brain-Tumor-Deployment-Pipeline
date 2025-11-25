@@ -5,9 +5,9 @@ stages:
     deps:
     - path: data/raw
       hash: md5
-      md5: 95e9db5c13393999258bfea913d0fa91.dir
-      size: 81384604
-      nfiles: 3730
+      md5: 1ec48126e076b642269290f50745070b.dir
+      size: 81784803
+      nfiles: 3745
     - path: src/preprocess.py
       hash: md5
       md5: ade88d4e7aa7246bfc7d540288d0813b
@@ -15,18 +15,23 @@ stages:
     outs:
     - path: data/processed
       hash: md5
-      md5: 02419da69b98e664d174fd79c0a72a39.dir
-      size: 4492232960
-      nfiles: 3730
+      md5: aa7b088432c4cd762d5244b20e06328c.dir
+      size: 4510298240
+      nfiles: 3745
   train:
-    cmd: echo "Training completed"
+    cmd: python src/train.py
     deps:
     - path: data/processed
       hash: md5
-      md5: ac7fec83bfdd3f86a5c101a11b59bf98.dir
-      size: 4489824256
-      nfiles: 3728
+      md5: aa7b088432c4cd762d5244b20e06328c.dir
+      size: 4510298240
+      nfiles: 3745
     - path: src/train.py
       hash: md5
-      md5: 84e0d5addb53ac3a9468f0ec1ab8ef7a
-      size: 1932
+      md5: 741890d5f785b429b3d346724303d308
+      size: 1517
+    outs:
+    - path: models/mobilenetv2_brain_tumor.h5
+      hash: md5
+      md5: 43a580957b1627ede0450b8a0bf6ecec
+      size: 10171424

@@ -13,4 +13,4 @@ stages:
       - data/processed
       - src/train.py
     outs:
-      - models/mobilenetv2_model.h5
+      - models/mobilenetv2_brain_tumor.h5
