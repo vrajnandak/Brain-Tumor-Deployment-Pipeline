@@ -60,5 +60,11 @@ pipeline {
         failure {
             echo "❌ Pipeline Failed. Please check logs."
         }
+         always {
+            sh '''
+            sudo chown -R madhav /home/madhav/Desktop/BrainTumor-SPE/mlruns
+            sudo chgrp -R mlops /home/madhav/Desktop/BrainTumor-SPE/mlruns
+            '''
+        }
     }
 }
