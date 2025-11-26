@@ -5,7 +5,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'automate',
+                git branch: 'main',
                     url: 'https://github.com/madhav8511/BrainTumor-SPE.git'
             }
         }
