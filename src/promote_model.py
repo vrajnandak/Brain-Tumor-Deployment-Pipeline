@@ -3,6 +3,7 @@ from mlflow.tracking import MlflowClient
 
 MODEL_NAME = "BrainTumorMobileNetV2"
 
+mlflow.set_tracking_uri("http://192.168.49.2:30020")
 client = MlflowClient()
 
 def promote_latest_model():
