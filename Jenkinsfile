@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PYENV = ".venv"
+        PYENV = "venv"
     }
 
     stages {
