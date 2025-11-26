@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 
-IMAGE_SIZE = 224
+IMAGE_SIZE = 128
 
 RAW_DIR_TRAIN = "data/raw/Training"
 RAW_DIR_TEST  = "data/raw/Testing"

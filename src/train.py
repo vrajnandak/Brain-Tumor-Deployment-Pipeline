@@ -12,7 +12,7 @@ CLASSES = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
 IMG_SIZE = 128
 BATCH_SIZE = 16
-EPOCHS = 5   # Fast training
+EPOCHS = 5
 
 
 def load_data():
@@ -38,6 +38,20 @@ def load_data():
     )
 
     return train_gen, val_gen
+
+
+def load_test_data():
+    test_datagen = ImageDataGenerator(rescale=1/255.0)
+
+    test_gen = test_datagen.flow_from_directory(
+        "data/raw/Testing",
+        target_size=(IMG_SIZE, IMG_SIZE),
+        batch_size=BATCH_SIZE,
+        class_mode="sparse",
+        shuffle=False
+    )
+
+    return test_gen
 
 
 def build_model():
@@ -70,17 +84,27 @@ def save_and_register_model():
     mlflow.set_experiment("brain_tumor_mobilenetv2")
 
     train_gen, val_gen = load_data()
+    test_gen = load_test_data()
 
     with mlflow.start_run():
 
         model = build_model()
 
-        # Train only once (fast!)
+        # Train model
         model.fit(
             train_gen,
             validation_data=val_gen,
             epochs=EPOCHS
         )
+
+        # Evaluate on test dataset
+        test_loss, test_acc = model.evaluate(test_gen)
+        print(f"\n🧪 Test Accuracy: {test_acc:.4f}")
+        print(f"🧪 Test Loss: {test_loss:.4f}\n")
+
+        # Log metrics to MLflow
+        mlflow.log_metric("test_accuracy", test_acc)
+        mlflow.log_metric("test_loss", test_loss)
 
         # Save locally
         model.save("models/mobilenetv2_brain_tumor.h5")
@@ -92,7 +116,7 @@ def save_and_register_model():
             registered_model_name="BrainTumorMobileNetV2"
         )
 
-        print("\n🚀 Model trained & registered successfully!\n")
+        print("\n🚀 Model trained, tested & registered successfully!\n")
 
 
 if __name__ == "__main__":
