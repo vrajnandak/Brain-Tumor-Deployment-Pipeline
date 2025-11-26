@@ -81,6 +81,7 @@ def build_model():
 
 def save_and_register_model():
 
+    mlflow.set_tracking_uri("file:///home/madhav/Desktop/BrainTumor-SPE/mlruns")
     mlflow.set_experiment("brain_tumor_mobilenetv2")
 
     train_gen, val_gen = load_data()
