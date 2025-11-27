@@ -123,6 +123,7 @@ pipeline {
             sh '''
             sudo chown -R madhav /home/madhav/Desktop/BrainTumor-SPE/mlruns
             sudo chgrp -R mlops /home/madhav/Desktop/BrainTumor-SPE/mlruns
+            sudo chmod -R 770 /home/madhav/Desktop/BrainTumor-SPE/mlruns
             '''
         }
     }
