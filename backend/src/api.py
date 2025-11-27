@@ -7,7 +7,7 @@ import tensorflow as tf
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 CLASSES = ['glioma', 'meningioma', 'notumor', 'pituitary']
 IMAGE_SIZE = 128
