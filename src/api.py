@@ -11,7 +11,7 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 app = Flask(__name__)
 CORS(app)
 
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_tracking_uri("http://127.0.0.1:5000")  # Need to change...
 
 CLASSES = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
@@ -28,7 +28,7 @@ def preprocess_image(image):
     image = image.convert("RGB")
 
     img = np.array(image, dtype=np.float32)
-    img = preprocess_input(img)   # MobileNetV2 preprocessing
+    img = preprocess_input(img)
     img = np.expand_dims(img, axis=0)
 
     return img
