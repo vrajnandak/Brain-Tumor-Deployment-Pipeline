@@ -7,6 +7,3 @@
 /src/__pycache__/
 /mlartifacts
 /models/*.h5
-mlflow-deploy.yaml
-mlflow-pvc.yaml
-mlflow-pv.yaml

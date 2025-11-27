@@ -1,5 +1,11 @@
 pipeline {
+
     agent any
+
+    environment {
+        DOCKER_IMAGE = "madhavgirdhar/braintumor"
+        TAG = "latest"
+    }
 
     stages {
 
@@ -49,6 +55,45 @@ pipeline {
                 sh '''
                     . venv/bin/activate && python src/promote_model.py
                 '''
+            }
+        }
+
+        stage('Fetch Latest Model From MLflow') {
+            steps {
+                sh """
+                echo "Fetching latest model from MLflow Registry..."
+
+                . venv/bin/activate && python backend/save_model.py
+                """
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh """
+                echo "Building Docker image..."
+                docker build -t $DOCKER_IMAGE:$TAG backend/
+                """
+            }
+        }
+
+        stage("Push to Docker Hub"){
+            steps{
+                echo "Pushing Image to Hub..."
+                script{
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                        docker.image("${DOCKER_IMAGE}:${TAG}").push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh """
+                echo "Deploying to Kubernetes..."
+                kubectl apply -f backend/backend-deploy.yaml
+                """
             }
         }
     }
