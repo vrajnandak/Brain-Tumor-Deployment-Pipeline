@@ -4,7 +4,6 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "madhavgirdhar/braintumor"
-        TAG = "latest"
     }
 
     stages {
@@ -72,7 +71,7 @@ pipeline {
             steps {
                 sh """
                 echo "Building Docker image..."
-                docker build -t $DOCKER_IMAGE:$TAG backend/
+                docker build -t $DOCKER_IMAGE:$BUILD_NUMBER backend/
                 """
             }
         }
@@ -82,18 +81,33 @@ pipeline {
                 echo "Pushing Image to Hub..."
                 script{
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
-                        docker.image("${DOCKER_IMAGE}:${TAG}").push()
+                        docker.image("${DOCKER_IMAGE}:${BUILD_NUMBER}").push()
                     }
                 }
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Update K8s Deployment Image') {
             steps {
-                sh """
-                echo "Deploying to Kubernetes..."
-                kubectl apply -f backend/backend-deploy.yaml
-                """
+                withCredentials([file(credentialsId: 'kubeconfig-minikube', variable: 'KUBECONFIG')]) {
+                    sh """
+                        echo "Updating brain-api image to madhavgirdhar/braintumor:${BUILD_NUMBER}"
+
+                        kubectl set image deployment/brain-api \
+                        brain-api=madhavgirdhar/braintumor:${BUILD_NUMBER}
+                    """
+                }
+            }
+        }
+
+        stage("Deploy to K8s") {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig-minikube', variable: 'KUBECONFIG')]) {
+                    sh """
+                        echo "Restarting deployment..."
+                        kubectl rollout restart deployment/brain-api
+                    """
+                }
             }
         }
     }
