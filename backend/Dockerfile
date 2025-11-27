@@ -12,8 +12,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy your backend code
 COPY src/api.py .
 
-# Copy the model file or folder
-COPY model.h5 ./model.h5
+# --- Cache busting ARG for model ---
+ARG MODEL_VERSION=0
+
+# Copy the model file (forces rebuild when MODEL_VERSION changes)
+COPY model.h5 /app/model.h5
 
 EXPOSE 5001
 

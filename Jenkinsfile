@@ -71,7 +71,10 @@ pipeline {
             steps {
                 sh """
                 echo "Building Docker image..."
-                docker build -t $DOCKER_IMAGE:$BUILD_NUMBER backend/
+
+                docker build \
+                    --build-arg MODEL_VERSION=\$(date +%s) \
+                    -t $DOCKER_IMAGE:$BUILD_NUMBER backend/
                 """
             }
         }
@@ -87,27 +90,12 @@ pipeline {
             }
         }
 
-        stage('Update K8s Deployment Image') {
+        stage('Deploy On k8 using Ansible') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig-minikube', variable: 'KUBECONFIG')]) {
-                    sh """
-                        echo "Updating brain-api image to madhavgirdhar/braintumor:${BUILD_NUMBER}"
-
-                        kubectl set image deployment/brain-api \
-                        brain-api=madhavgirdhar/braintumor:${BUILD_NUMBER}
-                    """
-                }
-            }
-        }
-
-        stage("Deploy to K8s") {
-            steps {
-                withCredentials([file(credentialsId: 'kubeconfig-minikube', variable: 'KUBECONFIG')]) {
-                    sh """
-                        echo "Restarting deployment..."
-                        kubectl rollout restart deployment/brain-api
-                    """
-                }
+                sh """
+                    ansible-playbook -i inventory.ini playbook.yaml \
+                    --extra-vars "build_number=${BUILD_NUMBER}"
+                """
             }
         }
     }

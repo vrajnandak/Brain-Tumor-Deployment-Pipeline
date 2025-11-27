@@ -1,0 +1,9 @@
+- name: Update and restart Kubernetes deployment
+  hosts: localhost
+  tasks:
+
+    - name: Update image
+      shell: kubectl set image deployment/brain-api brain-api=madhavgirdhar/braintumor:{{ build_number }}
+
+    - name: Restart deployment
+      shell: kubectl rollout restart deployment/brain-api
