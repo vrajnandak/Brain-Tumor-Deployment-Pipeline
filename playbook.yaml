@@ -1,9 +1,25 @@
 - name: Update and restart Kubernetes deployment
-  hosts: localhost
+  hosts: local
+  connection: local
+
+  vars:
+    kubeconfig_src: kubeconfig-jenkins.yaml
+    kubeconfig_dest: /tmp/kubeconfig-jenkins
+
   tasks:
 
+    - name: Copy kubeconfig (decrypted) for kubectl
+      copy:
+        src: "{{ kubeconfig_src }}"
+        dest: "{{ kubeconfig_dest }}"
+        mode: '0600'
+
     - name: Update image
+      environment:
+        KUBECONFIG: "{{ kubeconfig_dest }}"
       shell: kubectl set image deployment/brain-api brain-api=madhavgirdhar/braintumor:{{ build_number }}
 
     - name: Restart deployment
+      environment:
+        KUBECONFIG: "{{ kubeconfig_dest }}"
       shell: kubectl rollout restart deployment/brain-api

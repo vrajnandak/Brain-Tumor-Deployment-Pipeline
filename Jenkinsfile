@@ -4,6 +4,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "madhavgirdhar/braintumor"
+        VAULT_CREDS = "ansible-vault-pass"
     }
 
     stages {
@@ -92,10 +93,21 @@ pipeline {
 
         stage('Deploy On k8 using Ansible') {
             steps {
-                sh """
-                    ansible-playbook -i inventory.ini playbook.yaml \
-                    --extra-vars "build_number=${BUILD_NUMBER}"
-                """
+                withCredentials([string(
+                    credentialsId: "${VAULT_CREDS}",
+                    variable: "VAULT_PASS"
+                )]) {
+                    sh """
+                        echo "$VAULT_PASS" > .vault_pass
+
+                        ansible-playbook playbook.yaml \
+                        -i inventory.ini \
+                        --vault-password-file .vault_pass \
+                        --extra-vars "build_number=${BUILD_NUMBER}"
+
+                        rm -f .vault_pass
+                    """
+                }
             }
         }
     }
