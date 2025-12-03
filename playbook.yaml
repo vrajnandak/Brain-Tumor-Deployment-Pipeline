@@ -13,13 +13,21 @@
         src: "{{ kubeconfig_src }}"
         dest: "{{ kubeconfig_dest }}"
         mode: '0600'
+      
+    - name: Apply backend manifest (creates deployment/service if missing)
+      environment:
+        KUBECONFIG: "{{ kubeconfig_dest }}"
+      command: >
+        kubectl apply -f backend/backend-deploy.yaml
 
     - name: Update image
       environment:
         KUBECONFIG: "{{ kubeconfig_dest }}"
-      shell: kubectl set image deployment/brain-api brain-api=madhavgirdhar/braintumor:{{ build_number }}
+      command: >
+        kubectl set image deployment/brain-api brain-api=madhavgirdhar/braintumor:{{ build_number }}
 
     - name: Restart deployment
       environment:
         KUBECONFIG: "{{ kubeconfig_dest }}"
-      shell: kubectl rollout restart deployment/brain-api
+      command: >
+       kubectl rollout restart deployment/brain-api
