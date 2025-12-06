@@ -18,7 +18,7 @@
       environment:
         KUBECONFIG: "{{ kubeconfig_dest }}"
       command: >
-        kubectl apply -f backend/backend-deploy.yaml
+        kubectl apply -f backend/backend-deploy.yaml --validate=false
 
     - name: Update image
       environment:

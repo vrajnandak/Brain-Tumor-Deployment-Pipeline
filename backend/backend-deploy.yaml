@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: brain-api
-          image: madhavgirdhar/braintumor:19
+          image: madhavgirdhar/braintumor:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 5001
