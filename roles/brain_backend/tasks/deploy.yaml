@@ -1,0 +1,25 @@
+---
+- name: Apply backend manifest
+  environment:
+    KUBECONFIG: "{{ kubeconfig_dest }}"
+  command: >
+    kubectl apply -f {{ backend_manifest }} --validate=false
+  register: manifest_out
+
+- debug:
+    var: manifest_out.stdout_lines
+
+- name: Update API image
+  environment:
+    KUBECONFIG: "{{ kubeconfig_dest }}"
+  command: >
+    kubectl set image deployment/{{ deployment_name }} {{ container_name }}={{ image_repo }}:{{ build_number }}
+  register: image_out
+
+- debug:
+    var: image_out.stdout_lines
+
+- name: Trigger restart handler
+  meta: noop
+  notify: Restart Backend Deployment
+  changed_when: true

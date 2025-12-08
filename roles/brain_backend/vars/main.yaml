@@ -1,0 +1,7 @@
+kubeconfig_src: kubeconfig-jenkins.yaml
+kubeconfig_dest: /tmp/kubeconfig-jenkins
+
+backend_manifest: backend/backend-deploy.yaml
+deployment_name: brain-api
+container_name: brain-api
+image_repo: madhavgirdhar/braintumor
